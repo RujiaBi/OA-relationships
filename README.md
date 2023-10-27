@@ -1,4 +1,4 @@
-# oa_relationships
+# OA_relationships
 
 # Authors
 
