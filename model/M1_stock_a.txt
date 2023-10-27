@@ -1,0 +1,40 @@
+model{
+
+intercept_a ~ dunif(-30,30)
+intercept_b ~ dunif(-10,10)
+
+# stock effect
+for (i in 1:s){
+  ss_a[i] ~ dnorm(0,10)
+  stock_effs_a[i] <- ss_a[i] - mean(ss_a)
+
+  ss_b[i] ~ dnorm(0,10)
+  stock_effs_b[i] <- ss_b[i] - mean(ss_b)
+
+}
+
+# alpha_stock
+for (i in 1:s){
+  log_alpha[i] <- intercept_a + stock_effs_a[i]
+
+  beta[i] <- exp(intercept_b + stock_effs_b[i])
+}
+
+
+# log(CH) = log(alpha)+beta*log(B)
+
+## Likelihood
+
+for (i in 1:nrow){
+  dd[i,4] ~ dlnorm(log_alpha[dd[i,1]] + beta[dd[i,1]]*log(dd[i,5]), 1/var.r)
+  y_est[i] <- log_alpha[dd[i,1]] + beta[dd[i,1]]*log(dd[i,5])
+  loglik[i] <- logdensity.norm(log(dd[i,4]), log_alpha[dd[i,1]] + beta[dd[i,1]]*log(dd[i,5]), 1/var.r)
+}
+
+
+# Priors
+var.r ~ dunif(0,100)
+
+}
+
+

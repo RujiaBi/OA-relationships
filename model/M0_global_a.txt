@@ -1,0 +1,22 @@
+model{
+
+log_alpha ~ dunif(-30,30)
+beta ~ dunif(0,10)
+
+# log(CH) = log(alpha)+beta*log(B)
+
+## Likelihood
+
+for (i in 1:nrow){
+  dd[i,4] ~ dlnorm(log_alpha + beta*log(dd[i,5]), 1/var.r)
+  y_est[i] <- log_alpha + beta*log(dd[i,5])
+  loglik[i] <- logdensity.norm(log(dd[i,4]), log_alpha + beta*log(dd[i,5]), 1/var.r)
+}
+
+
+# Priors
+var.r ~ dunif(0,100)
+
+}
+
+
